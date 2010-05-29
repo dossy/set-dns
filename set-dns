@@ -1,0 +1,71 @@
+#!/bin/sh
+
+SET="0"
+SERVERS=""
+CONFFILE="/etc/defaults/set-dns.conf"
+
+while getopts ":c:" cmd; do
+    case $cmd in
+        c)  CONFFILE="$OPTARG" ;;
+    esac
+done
+
+[ -f "$CONFFILE" ] && . "$CONFFILE"
+
+usage() {
+    cat <<-EOT
+Usage: `basename $0` [OPTION]... [SERVER]...
+Show or set the DNS servers for the PrimaryService using scutil(1).
+
+  -c <file>  use <file> as the config file, instead of
+               /etc/defaults/set-dns.conf
+  -s         set server list
+  -?         display this help and exit
+
+By default, SERVERS is set to:
+
+    $SERVERS
+    
+To change this, edit the set-dns.conf file.
+EOT
+}
+
+OPTIND=1
+while getopts ":c:s?" cmd; do
+    ## echo "$cmd/$OPTIND: $OPTARG"
+    case $cmd in
+        c)  ;;
+        s)  SET="1" ;;
+        [?]) usage; exit ;;
+    esac
+done
+shift $((OPTIND - 1))
+
+if [ "$*" != "" ]; then
+    SERVERS="$*"
+fi
+
+SERVICE=`echo "show State:/Network/Global/IPv4" | scutil | awk '/PrimaryService/ { print $3 }'`
+KEY="State:/Network/Service/$SERVICE/DNS"
+
+if [ "$SET" = "1" ]; then
+    if [ "`id -u`" != "0" ]; then
+        echo "You must be root to set DNS servers."
+        exit
+    fi
+
+    scutil <<-EOT
+        open
+        get $KEY
+        d.add ServerAddresses * $SERVERS
+        d.show
+        set $KEY
+        close
+EOT
+else
+    scutil <<-EOT
+        open
+        show $KEY
+        close
+EOT
+fi
