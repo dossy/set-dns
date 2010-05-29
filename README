@@ -11,6 +11,13 @@ set-dns is a simple shell script to simplify the changing of the
 PrimaryService's DNS server list under MacOS X 10.5+ using the
 scutil(1) utility.
 
+DOWNLOAD
+========
+
+The script is hosted in a Git repository at GitHub.com:
+
+http://github.com/dossy/set-dns
+
 INSTALLATION
 ============
 
