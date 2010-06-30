@@ -1,5 +1,6 @@
 ---
-title:set-dns
+title: set-dns
+layout: default
 ---
 set-dns
 =======
@@ -34,7 +35,8 @@ Copy set-dns.conf to /etc/defaults, and set-dns to /usr/bin:
     $ sudo chmod 0755 /usr/bin/set-dns
 
 Edit /etc/defaults/set-dns.conf with the default servers you wish to
-use.
+use.  This should be one or more IP addresses separated with spaces.
+By default, SERVERS is set to "192.168.1.1".
 
 USAGE
 -----
@@ -46,12 +48,6 @@ USAGE
                    /etc/defaults/set-dns.conf
       -s         set server list
       -?         display this help and exit
-
-    By default, SERVERS is set to:
-
-        192.168.1.1
-        
-    To change this, edit the set-dns.conf file.
 
 LICENSE
 -------
